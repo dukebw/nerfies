@@ -46,6 +46,7 @@ def render_image(state, rays_dict, model_fn, device_count, rng, chunk=8192):
     key_0 = jax.random.split(key_0, device_count)
     key_1 = jax.random.split(key_1, device_count)
     host_id = jax.host_id()
+    points = []
     rgb = []
     depth_exp = []
     depth_med = []
@@ -85,14 +86,17 @@ def render_image(state, rays_dict, model_fn, device_count, rng, chunk=8192):
         depth_exp.append(utils.unshard(model_out[ret_key]["depth"][0], padding))
         depth_med.append(utils.unshard(model_out[ret_key]["med_depth"][0], padding))
         acc.append(utils.unshard(model_out[ret_key]["acc"][0], padding))
+        points.append(utils.unshard(model_out[ret_key]["points"][0], padding))
     rgb = jnp.concatenate(rgb, axis=0)
     depth_exp = jnp.concatenate(depth_exp, axis=0)
     depth_med = jnp.concatenate(depth_med, axis=0)
     acc = jnp.concatenate(acc, axis=0)
+    points = jnp.concatenate(points, axis=0)
     logging.info("Rendering took %.04s", time.time() - start_time)
     return (
         rgb.reshape((h, w, -1)),
         depth_exp.reshape((h, w, -1)),
         depth_med.reshape((h, w, -1)),
         acc.reshape((h, w, -1)),
+        points.reshape((h, w, -1)),
     )

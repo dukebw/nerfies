@@ -285,6 +285,7 @@ class NerfModel(nn.Module):
                 "med_depth": med_depth,
                 "disp": disp,
                 "acc": acc,
+                "points": points,
             }
         }
         if self.use_warp and use_warp and self.use_warp_jacobian:
@@ -342,6 +343,7 @@ class NerfModel(nn.Module):
                 "med_depth": med_depth,
                 "disp": disp,
                 "acc": acc,
+                "points": points,
             }
             if self.use_weights:
                 out["fine"]["weights"] = weights
