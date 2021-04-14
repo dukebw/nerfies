@@ -46,11 +46,12 @@ def render_image(state, rays_dict, model_fn, device_count, rng, chunk=8192):
     key_0 = jax.random.split(key_0, device_count)
     key_1 = jax.random.split(key_1, device_count)
     host_id = jax.host_id()
-    points = []
     rgb = []
     depth_exp = []
     depth_med = []
     acc = []
+    points = []
+    weights = []
     start_time = time.time()
     for i in range(0, num_rays, chunk):
         logging.info("\tRendering ray batch: %d/%d", i, num_rays)
@@ -87,16 +88,19 @@ def render_image(state, rays_dict, model_fn, device_count, rng, chunk=8192):
         depth_med.append(utils.unshard(model_out[ret_key]["med_depth"][0], padding))
         acc.append(utils.unshard(model_out[ret_key]["acc"][0], padding))
         points.append(utils.unshard(model_out[ret_key]["points"][0], padding))
+        weights.append(utils.unshard(model_out[ret_key]["weights"][0], padding))
     rgb = jnp.concatenate(rgb, axis=0)
     depth_exp = jnp.concatenate(depth_exp, axis=0)
     depth_med = jnp.concatenate(depth_med, axis=0)
     acc = jnp.concatenate(acc, axis=0)
     points = jnp.concatenate(points, axis=0)
+    weights = jnp.concatenate(weights, axis=0)
     logging.info("Rendering took %.04s", time.time() - start_time)
     return (
         rgb.reshape((h, w, -1)),
         depth_exp.reshape((h, w, -1)),
         depth_med.reshape((h, w, -1)),
         acc.reshape((h, w, -1)),
-        points.reshape((h, w, -1)),
+        points.reshape((h, w, -1, 3)),
+        weights.reshape((h, w, -1)),
     )
