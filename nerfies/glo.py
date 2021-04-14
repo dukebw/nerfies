@@ -20,34 +20,35 @@ from nerfies import types
 
 
 class GloEncoder(nn.Module):
-  """A GLO encoder module, which is just a thin wrapper around nn.Embed.
+    """A GLO encoder module, which is just a thin wrapper around nn.Embed.
 
-  Attributes:
-    num_embeddings: The number of embeddings.
-    features: The dimensions of each embedding.
-    embedding_init: The initializer to use for each.
-  """
-
-  num_embeddings: int
-  features: int
-  embedding_init: types.Activation = nn.initializers.uniform(scale=0.05)
-
-  def setup(self):
-    self.embed = nn.Embed(
-        num_embeddings=self.num_embeddings,
-        features=self.features,
-        embedding_init=self.embedding_init)
-
-  def __call__(self, inputs: jnp.ndarray) -> jnp.ndarray:
-    """Method to get embeddings for specified indices.
-
-    Args:
-      inputs: The indices to fetch embeddings for.
-
-    Returns:
-      The embeddings corresponding to the indices provided.
+    Attributes:
+      num_embeddings: The number of embeddings.
+      features: The dimensions of each embedding.
+      embedding_init: The initializer to use for each.
     """
-    if inputs.shape[-1] == 1:
-      inputs = jnp.squeeze(inputs, axis=-1)
 
-    return self.embed(inputs)
+    num_embeddings: int
+    features: int
+    embedding_init: types.Activation = nn.initializers.uniform(scale=0.05)
+
+    def setup(self):
+        self.embed = nn.Embed(
+            num_embeddings=self.num_embeddings,
+            features=self.features,
+            embedding_init=self.embedding_init,
+        )
+
+    def __call__(self, inputs: jnp.ndarray) -> jnp.ndarray:
+        """Method to get embeddings for specified indices.
+
+        Args:
+          inputs: The indices to fetch embeddings for.
+
+        Returns:
+          The embeddings corresponding to the indices provided.
+        """
+        if inputs.shape[-1] == 1:
+            inputs = jnp.squeeze(inputs, axis=-1)
+
+        return self.embed(inputs)

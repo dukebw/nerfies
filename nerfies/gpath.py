@@ -18,30 +18,30 @@ import tensorflow as tf
 
 
 class GPath(pathlib.PurePosixPath):
-  """A thin wrapper around PurePath to support various filesystems."""
+    """A thin wrapper around PurePath to support various filesystems."""
 
-  def open(self, *args, **kwargs):
-    return tf.io.gfile.GFile(self, *args, **kwargs)
+    def open(self, *args, **kwargs):
+        return tf.io.gfile.GFile(self, *args, **kwargs)
 
-  def exists(self):
-    return tf.io.gfile.exists(self)
+    def exists(self):
+        return tf.io.gfile.exists(self)
 
-  # pylint: disable=unused-argument
-  def mkdir(self, mode=0o777, parents=False, exist_ok=False):
-    if not exist_ok:
-      if self.exists():
-        raise FileExistsError('Directory already exists.')
+    # pylint: disable=unused-argument
+    def mkdir(self, mode=0o777, parents=False, exist_ok=False):
+        if not exist_ok:
+            if self.exists():
+                raise FileExistsError("Directory already exists.")
 
-    if parents:
-      return tf.io.gfile.makedirs(self)
-    else:
-      return tf.io.gfile.mkdir(self)
+        if parents:
+            return tf.io.gfile.makedirs(self)
+        else:
+            return tf.io.gfile.mkdir(self)
 
-  def glob(self, pattern):
-    return [GPath(x) for x in tf.io.gfile.glob(str(self / pattern))]
+    def glob(self, pattern):
+        return [GPath(x) for x in tf.io.gfile.glob(str(self / pattern))]
 
-  def iterdir(self):
-    return [GPath(self, x) for x in tf.io.gfile.listdir(self)]
+    def iterdir(self):
+        return [GPath(self, x) for x in tf.io.gfile.listdir(self)]
 
-  def is_dir(self):
-    return tf.io.gfile.isdir(self)
+    def is_dir(self):
+        return tf.io.gfile.isdir(self)

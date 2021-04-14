@@ -15,10 +15,10 @@
 import setuptools
 
 with open("README.md", "r", encoding="utf-8") as fh:
-  long_description = fh.read()
+    long_description = fh.read()
 
 setuptools.setup(
-    name="nerfies", # Replace with your own username
+    name="nerfies",  # Replace with your own username
     version="0.0.1",
     author="Keunhong Park",
     author_email="kpar@cs.washington.edu",
@@ -32,5 +32,5 @@ setuptools.setup(
         "License :: OSI Approved :: Apache License 2.0",
         "Operating System :: OS Independent",
     ],
-    python_requires='>=3.6',
+    python_requires=">=3.6",
 )
